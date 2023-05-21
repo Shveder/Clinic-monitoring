@@ -3,11 +3,11 @@
 public class AddSetStatusDeletedRequest
 {
     public int Id { get; set; }
-    public bool Is_deleted { get; set; }
+    public bool IsDeleted { get; set; }
 
     public AddSetStatusDeletedRequest(int id, bool isDeleted)
     {
         Id = id;
-        Is_deleted = isDeleted;
+        IsDeleted = isDeleted;
     }
 }

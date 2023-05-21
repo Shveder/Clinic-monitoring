@@ -243,14 +243,15 @@ public class AdminRepository : RepositoryBase
         command.ExecuteNonQuery();
         CloseConnection(connection);
     }
-    public List<LoginHistory> GetLoginHistory()
+    public List<LoginHistory> GetLoginHistory(int userId)
     {
         NpgsqlConnection connection = new NpgsqlConnection(connectionString);
         List<LoginHistory> loginHistories = new List<LoginHistory>();
-        var sql = "SELECT * FROM dentist.login_history";
+        var sql = "SELECT * FROM dentist.login_history WHERE user_id = @userID ";
         OpenConnection(connection);
         using (NpgsqlCommand command = new NpgsqlCommand(sql, connection))
         {
+            command.Parameters.AddWithValue("@userId", userId);
             using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
@@ -393,5 +394,59 @@ public class AdminRepository : RepositoryBase
         }
         connection.Close(); // закрываем подключение
         return null;
+    }
+
+    public List<Deposit> GetDepositsOfUser(int userId)
+    {
+        NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+        List<Deposit> deposits = new List<Deposit>();
+        connection.Open();
+        var sql = "SELECT * FROM dentist.deposits WHERE user_id = @userId";
+        using (var command = new NpgsqlCommand(sql, connection))
+        {
+            command.Parameters.AddWithValue("userId", userId);
+                
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    int id = reader.GetInt32(0);
+                    double sum = reader.GetDouble(1);
+                    DateTime date = reader.GetDateTime(2);
+                    int userID = reader.GetInt32(3);
+                    deposits.Add(new Deposit(id, sum, date, userID));
+                }
+            }
+        }
+        connection.Close(); // закрываем подключение
+        return deposits;
+        
+    }
+    
+    public List<Purchase>GetPurchasesOfUser(int userId)
+    {
+        NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+        List<Purchase> purchases = new List<Purchase>();
+        connection.Open();
+        var sql = "SELECT * FROM dentist.purchases_of_view WHERE user_id = @userId";
+        using (var command = new NpgsqlCommand(sql, connection))
+        {
+            command.Parameters.AddWithValue("userId", userId);
+                
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    int id = reader.GetInt32(0);
+                    double price = reader.GetDouble(1);
+                    int userID = reader.GetInt32(2);
+                    int serviceID = reader.GetInt32(3);
+                    purchases.Add(new Purchase(id, price, userID, serviceID));
+                }
+            }
+        }
+        connection.Close(); // закрываем подключение
+        return purchases;
+        
     }
 }

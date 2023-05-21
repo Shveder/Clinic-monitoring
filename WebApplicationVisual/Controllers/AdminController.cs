@@ -34,22 +34,23 @@ public class AdminController : ControllerBase
         }
     }
 
+        
         [HttpPut, Route("setStatusDel")]
         public async Task<ActionResult> SetStatusDel([FromBody] AddSetStatusDeletedRequest request)
-    {
-        try
         {
-            var ur = new AdminRepository();
-            ur.SetUserStatusDel(request.Id, request.Is_deleted);
-            _logger.LogInformation("Статус изменен");
-            return Ok("Статус изменен");
+            try
+            {
+                var ur = new AdminRepository();
+                ur.SetUserStatusDel(request.Id, request.IsDeleted);
+                _logger.LogInformation("Статус изменен");
+                return Ok("Статус изменен");
+            }
+            catch (Exception)
+            {
+                _logger.LogInformation("Статус не изменен");
+                return BadRequest("Статус не изменен");
+            }
         }
-        catch (Exception)
-        {
-            _logger.LogInformation("Статус не изменен");
-            return BadRequest("Статус не изменен");
-        }
-    }
 
         [HttpDelete, Route("deleteAccount")]
         public async Task<ActionResult> DeleteAccount(int id)
@@ -70,20 +71,20 @@ public class AdminController : ControllerBase
 
         [HttpPut, Route("setStatusBlock")]
         public async Task<ActionResult> SetStatusBlock([FromBody] AddSetStatusBlockedRequest request)
-    {
-        try
         {
-            var ur = new AdminRepository();
-            ur.SetUserStatusBlock(request.Id, request.Is_blocked);
-            _logger.LogInformation("Статус изменен");
-            return Ok("Статус изменен");
+            try
+            {
+                var ur = new AdminRepository();
+                ur.SetUserStatusBlock(request.Id, request.IsBlocked);
+                _logger.LogInformation("Статус изменен");
+                return Ok("Статус изменен");
+            }
+            catch (Exception)
+            {
+                _logger.LogInformation("Статус не изменен");
+                return BadRequest("Статус не изменен");
+            }
         }
-        catch (Exception)
-        {
-            _logger.LogInformation("Статус не изменен");
-            return BadRequest("Статус не изменен");
-        }
-    }
 
         [HttpGet, Route("getUserList")]
         public async Task<ActionResult> GetUserList()
@@ -100,6 +101,22 @@ public class AdminController : ControllerBase
             return BadRequest("Список пользователей недоступен");
         }
     }
+        [HttpPut, Route("changeRole")]
+        public async Task<ActionResult> ChangeRole([FromBody] AddSetRoleRequest request)
+        {
+            try
+            {
+                var ar = new AdminRepository();
+                ar.ChangeUserRole(request.Id, request.Role);
+                _logger.LogInformation("Роль изменена");
+                return Ok("Роль изменена");
+            }
+            catch (Exception)
+            {
+                _logger.LogInformation("Роль не изменена");
+                return BadRequest("Роль не изменена");
+            }
+        }
 
         /*[HttpPut, Route("editUser")]
         public async Task<ActionResult> EditUser([FromBody] EditUserRequest request)
@@ -371,12 +388,12 @@ public class AdminController : ControllerBase
         }
 
         [HttpGet, Route(("getLoginHistoryList"))]
-        public async Task<ActionResult> GetLoginHistoryList()
+        public async Task<ActionResult> GetLoginHistoryList(int id)
         {
             try
             {
                 var ar = new AdminRepository();
-                var loginList = ar.GetLoginHistory();
+                var loginList = ar.GetLoginHistory(id);
                 _logger.LogInformation("История входов доступна");
                 return Ok(loginList);
             }
@@ -503,6 +520,42 @@ public class AdminController : ControllerBase
                 _logger.LogInformation("Название клиники с id = " + id + " недоступно");
                 return BadRequest("Название клиники с id = " + id + " недоступно");
             }
+        }
+
+        [HttpGet, Route("getDepositsOfUser")]
+        public async Task<ActionResult> GetDepositsOfUser(int userId)
+        {
+            try
+            {
+                var ar = new AdminRepository();
+                 var deposits = ar.GetDepositsOfUser(userId);
+                _logger.LogInformation("Депозиты доступны");
+                return Ok(deposits);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation("Депозиты недоступны");
+                return BadRequest("Депозиты недоступны");
+            }
+            
+        }
+        
+        [HttpGet, Route("getPurchasesOfUser")]
+        public async Task<ActionResult> GetPurchasesOfUser(int userId)
+        {
+            try
+            {
+                var ar = new AdminRepository();
+                var purchases = ar.GetPurchasesOfUser(userId);
+                _logger.LogInformation("История покупок доступна");
+                return Ok(purchases);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation("История покупок недоступна");
+                return BadRequest("История покупок недоступна");
+            }
+            
         }
         
 }

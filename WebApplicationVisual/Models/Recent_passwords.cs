@@ -2,15 +2,15 @@
 
 public class RecentPasswords
 {
-    private int _id { get; set; }
-    public string _password { get; set; }
-    private int _user_id { get; set; }
+    private int Id { get; set; }
+    public string Password { get; set; }
+    private int User_id { get; set; }
    
     public RecentPasswords(int id, string password, int userId)
     {
-        _id = id;
-        _password = password;
-        _user_id = userId;
+        Id = id;
+        Password = password;
+        User_id = userId;
     }
     
 }
